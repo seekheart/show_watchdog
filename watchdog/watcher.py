@@ -33,11 +33,11 @@ class Watcher:
         Gets show title id
 
         args:
-        
+
         show_title: name of show to be queried
 
         returns:
-        
+
         show_id: id of show
         """
 
@@ -50,11 +50,11 @@ class Watcher:
         Gets all episodes of a given show
 
         args:
-        
+
         show_id: tconst id from imdb
 
         returns:
-        
+
         ist of episodes
         """
         return self.imdb.get_episodes(show_id)
@@ -92,12 +92,11 @@ class Watcher:
 
         show_id = self.get_show_id(show_title)
         show = self.imdb.get_title_by_id(show_id)
-        return {show.title : show.trailer_image_urls}
+        return {show.title : show.poster_url}
 
     def save_posters(self, urls, title):
-        for index, url in enumerate(urls):
-            dest = '{}/{}{}.jpg'.format(self.static_dir, title, index)
-            urllib.request.urlretrieve(url, dest)
+        dest = '{}/{}.jpg'.format(self.static_dir, title)
+        urllib.request.urlretrieve(url, dest)
 
     def get_show_titles(self):
         """
