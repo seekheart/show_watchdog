@@ -20,13 +20,13 @@ class Watcher:
         gets all current popular shows from imdb
         """
         shows = self.imdb.popular_shows()
-        tracked_shows = {}
+        tracked_shows = []
         for show in shows:
             tracked_shows_d = {}
             tracked_shows_d['id'] = show['tconst']
             tracked_shows_d['title'] = show['title']
             tracked_shows_d['poster'] = show['image']['url']
-            tracked_shows[show['tconst']] = tracked_shows_d
+            tracked_shows.append(tracked_shows_d)
         return tracked_shows
 
     def get_show_id(self, show_title):
@@ -43,8 +43,8 @@ class Watcher:
         """
 
         for show in self.tracked_shows:
-            if show_title == self.tracked_shows[show]['title']:
-                return self.tracked_shows[show]['id']
+            if show_title == show['title']:
+                return show['id']
 
     def get_episodes(self, show_id):
         """
@@ -74,14 +74,13 @@ class Watcher:
 
         programs = {}
         for show in self.tracked_shows:
-            programs[self.tracked_shows[show]['title']] = \
-                    self.get_episodes(self.tracked_shows[show]['id'])
+            programs[show['title']] = self.get_episodes(show['id'])
 
         return programs
 
-    def get_posters(self, show_title):
+    def get_poster(self, show_title):
         """
-        gets all the img urls for a show
+        gets the img url for the poster of a show
 
         args:
 
@@ -89,12 +88,13 @@ class Watcher:
 
         returns:
 
-        list of links to show posters
+        dictionary with {show_title: poster_url}
         """
 
-        show_id = self.get_show_id(show_title)
         #print(self.tracked_shows[show_id]['poster'])
-        return {show_title : self.tracked_shows[show_id]['poster']}
+        for show in self.tracked_shows:
+            if show['title'] == show_title:
+                return {show_title : show['poster']}
 
     def save_posters(self, urls, title):
         title = self.sanitize_title(title)
@@ -120,12 +120,12 @@ class Watcher:
         list of show titles
         """
 
-        return [self.tracked_shows[show]['title'] for show in self.tracked_shows]
+        return [show['title'] for show in self.tracked_shows]
 
 if __name__ == '__main__':
     a = Watcher()
     titles = a.get_show_titles()
     for t in titles:
-        posters_dict = a.get_posters(t)
+        posters_dict = a.get_poster(t)
         for title, url in posters_dict.items():
             a.save_posters(url, title)
