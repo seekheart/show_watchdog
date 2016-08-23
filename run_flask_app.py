@@ -9,7 +9,7 @@ app = Flask(__name__)
 doggie = watcher.Watcher()
 images = []
 for show in doggie.get_show_titles():
-    cur_images = doggie.get_posters(show)[show]
+    cur_images = doggie.get_poster(show)[show]
     try:
         #print(show)
         images.append(cur_images)

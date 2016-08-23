@@ -25,6 +25,7 @@ class Watcher:
             tracked_shows_d = {}
             tracked_shows_d['id'] = show['tconst']
             tracked_shows_d['title'] = show['title']
+            tracked_shows_d['poster'] = show['image']['url']
             tracked_shows.append(tracked_shows_d)
         return tracked_shows
 
@@ -77,9 +78,9 @@ class Watcher:
 
         return programs
 
-    def get_posters(self, show_title):
+    def get_poster(self, show_title):
         """
-        gets all the img urls for a show
+        gets the img url for the poster of a show
 
         args:
 
@@ -87,16 +88,24 @@ class Watcher:
 
         returns:
 
-        list of links to show posters
+        dictionary with {show_title: poster_url}
         """
 
-        show_id = self.get_show_id(show_title)
-        show = self.imdb.get_title_by_id(show_id)
-        return {show.title : show.poster_url}
+        #print(self.tracked_shows[show_id]['poster'])
+        for show in self.tracked_shows:
+            if show['title'] == show_title:
+                return {show_title : show['poster']}
 
     def save_posters(self, urls, title):
+        title = self.sanitize_title(title)
         dest = '{}/{}.jpg'.format(self.static_dir, title)
         urllib.request.urlretrieve(url, dest)
+
+    def sanitize_title(self, title):
+        forbidden = ('<', '>', ':', '"', '/', '\\', '|', '?', '*')
+        for char in forbidden:
+            title = title.replace(char, '')
+        return title
 
     def get_show_titles(self):
         """
@@ -117,6 +126,6 @@ if __name__ == '__main__':
     a = Watcher()
     titles = a.get_show_titles()
     for t in titles:
-        posters_dict = a.get_posters(t)
+        posters_dict = a.get_poster(t)
         for title, url in posters_dict.items():
             a.save_posters(url, title)
