@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 {% for image in images%}
-<img src={{image}} style="width: 50%"></img>
+<img src={{image}} class="img-thumbnail img-responsive col-md-3" style="object-fit: cover;height:750px;">
 {% endfor %}
 {% endblock %}
