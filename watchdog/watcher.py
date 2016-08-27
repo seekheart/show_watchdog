@@ -97,11 +97,16 @@ class Watcher:
                 return {show_title : show['poster']}
 
     def save_posters(self, urls, title):
+        """saves posters as images in static/images"""
         title = self.sanitize_title(title)
         dest = '{}/{}.jpg'.format(self.static_dir, title)
         urllib.request.urlretrieve(url, dest)
 
     def sanitize_title(self, title):
+        """
+        prevents injections and windows errors
+        by removing forbidden characters
+        """
         forbidden = ('<', '>', ':', '"', '/', '\\', '|', '?', '*')
         for char in forbidden:
             title = title.replace(char, '')

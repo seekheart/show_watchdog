@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template
+#import stuff
+from flask import Flask, render_template, request
+from flask_wtf import Form
 from watchdog import watcher
 import os
 import urllib.parse
@@ -18,12 +20,23 @@ for show in doggie.get_show_titles():
         pass
 
 @app.route('/')
-def home_page():
-    images = os.path.join(os.path.dirname(__file__), 'static/images/')
-    img_fi = os.listdir(images)
-    img_fi = ['{}{}'.format(images, urllib.parse.quote(f)) for f in img_fi]
-    #img_fi = ['{}{}'.format(images, f) for f in img_fi]
-    return render_template('index.html', images=img_fi)
+def home():
+    return render_template('homepage.html')
+
+@app.route('/movies')
+def movies():
+    if request.method == 'GET':
+        show_name = request.form['showName']
+        email = request.form['email']
+        return show_name, email
+
+# @app.route('/movies')
+# def home_page():
+#     images = os.path.join(os.path.dirname(__file__), 'static/images/')
+#     img_fi = os.listdir(images)
+#     img_fi = ['{}{}'.format(images, urllib.parse.quote(f)) for f in img_fi]
+#     #img_fi = ['{}{}'.format(images, f) for f in img_fi]
+#     return render_template('index.html', images=img_fi)
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="pageContent">Watchdog 0.0.1</h1>
+    <p class="pageContent">
+    Welcome to watchdog, we send hounds to watch
+    for updates in your favorite shows that are currently
+    on air.  
+    </p>
+    <div class="input-group container-fluid">
+    <form method="GET" action="/movies">
+            <table>
+                <thead>
+                    <th>Show Name</th>
+                    <th>Email</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" placeholder="Show Name" name="showName">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" placeholder="Email" name="email">
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" type="Submit">Submit</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+{% endblock %}
