@@ -4,10 +4,13 @@ Imdb Watcher
 Mike Tung
 """
 
-from imdbpie import Imdb
 import os
+import string
 import urllib.request
 import urllib
+
+from imdbpie import Imdb
+
 
 class Watcher:
     def __init__(self):
@@ -102,7 +105,7 @@ class Watcher:
         urllib.request.urlretrieve(url, dest)
 
     def sanitize_title(self, title):
-        forbidden = ('<', '>', ':', '"', '/', '\\', '|', '?', '*')
+        forbidden = string.punctuation
         for char in forbidden:
             title = title.replace(char, '')
         return title
