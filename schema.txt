@@ -1,0 +1,8 @@
+MY SQL DB
+
+Database Watchdog
+
+imdbInfo
+TTid (pk) VARCHAR(50)
+Title VARCHAR(100)
+PosterURL VARCHAR(120)
