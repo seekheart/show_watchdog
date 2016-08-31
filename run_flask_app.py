@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 #import stuff
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_wtf import Form
 from watchdog import watcher
 import os
 import urllib.parse
+from models import db, imdbInfo
 
 app = Flask(__name__)
 doggie = watcher.Watcher()
@@ -19,6 +20,14 @@ for show in doggie.get_show_titles():
         #print(show, e)
         pass
 
+if len(imdbInfo.query.all()) == 0:
+    # our database is empty
+    for i in doggie.tracked_shows:
+        if len(i["poster"]) <= 120:
+            dummy = imdbInfo(i["id"], i["title"], i["poster"])
+            db.session.add(dummy)
+    db.session.commit()
+
 @app.route('/')
 def home():
     return render_template('homepage.html')
@@ -29,6 +38,20 @@ def movies():
         show_name = request.form['showName']
         email = request.form['email']
         return show_name, email
+
+@app.route('/search', methods=["GET", "POST"])
+def search():
+    show_object = imdbInfo.query.filter_by(Title=request.values["q"]).first()
+    if show_object is not None:
+        return redirect(url_for('shows',id=show_object.TTid))
+    else:
+        abort(404)
+
+@app.route('/shows/<string:id>')
+def shows(id):
+    show_object = imdbInfo.query.filter_by(TTid=id).first()
+    if show_object is not None:
+        return "<img src={}></img>".format(show_object.PosterURL)
 
 # @app.route('/movies')
 # def home_page():
