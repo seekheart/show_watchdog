@@ -11,7 +11,7 @@ class imdbInfo(db.Model):
 
     TTid = db.Column(db.String(50),primary_key=True)
     Title = db.Column(db.String(100))
-    PosterURL = db.Column(db.String(120))
+    PosterURL = db.Column(db.String(200))
 
     def __init__(self, TTid, Title, PosterURL):
         self.TTid = TTid

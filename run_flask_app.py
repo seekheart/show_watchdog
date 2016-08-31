@@ -23,9 +23,8 @@ for show in doggie.get_show_titles():
 if len(imdbInfo.query.all()) == 0:
     # our database is empty
     for i in doggie.tracked_shows:
-        if len(i["poster"]) <= 120:
-            dummy = imdbInfo(i["id"], i["title"], i["poster"])
-            db.session.add(dummy)
+        dummy = imdbInfo(i["id"], i["title"], i["poster"])
+        db.session.add(dummy)
     db.session.commit()
 
 @app.route('/')
