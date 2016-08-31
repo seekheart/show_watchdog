@@ -11,7 +11,7 @@ Connector/Python Setup
 
 Windows
 ---
-Download the zip file from [here](http://dev.mysql.com/downloads/connector/python/), unzip it, then run this on an elevated cmd window:
+Download the zip file from [here](http://dev.mysql.com/downloads/connector/python/) (its "Platform Independent" in dropdown menu), unzip it, then run this on an elevated cmd window:
 
 ```
 setup.py install
