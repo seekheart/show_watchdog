@@ -31,16 +31,18 @@ if len(imdbInfo.query.all()) == 0:
 def home():
     return render_template('homepage.html')
 
-@app.route('/movies')
+@app.route('/movies', methods=['GET','POST'])
 def movies():
-    if request.method == 'GET':
+    if request.method == 'POST':
         show_name = request.form['showName']
         email = request.form['email']
-        return show_name, email
+        return '{}, {}'.format(show_name, email)
+    return redirect(url_for('home'))
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
-    show_object = imdbInfo.query.filter_by(Title=request.values["q"]).first()
+    show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(
+                                                        request.values['q']))).first_or_404()
     if show_object is not None:
         return redirect(url_for('shows',id=show_object.TTid))
     else:
