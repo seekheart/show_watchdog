@@ -2,8 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+mysqlconnector://root:test@localhost/Watchdog"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config.from_object('setting.Config') 
 db = SQLAlchemy(app)
 
 class imdbInfo(db.Model):

@@ -6,22 +6,15 @@ from flask_wtf import Form
 from watchdog import watcher
 import os
 import urllib.parse
-from models import db, imdbInfo
+from data_model.models import db, imdbInfo
+from setting import DevelopmentConfig
 
 app = Flask(__name__)
+app.config.from_object('setting.Config')
 doggie = watcher.Watcher()
-images = []
-for show in doggie.get_show_titles():
-    cur_images = doggie.get_poster(show)[show]
-    try:
-        #print(show)
-        images.append(cur_images)
-    except Exception as e:
-        #print(show, e)
-        pass
 
 if len(imdbInfo.query.all()) == 0:
-    # our database is empty
+    # populate empty table
     for i in doggie.tracked_shows:
         dummy = imdbInfo(i["id"], i["title"], i["poster"])
         db.session.add(dummy)
@@ -52,7 +45,7 @@ def search():
 def shows(id):
     show_object = imdbInfo.query.filter_by(TTid=id).first()
     if show_object is not None:
-        return "<img src={}></img>".format(show_object.PosterURL)
+        return '<img src="../static/images/{}.jpg"></img>'.format(show_object.TTid)
 
 # @app.route('/movies')
 # def home_page():
@@ -63,4 +56,4 @@ def shows(id):
 #     return render_template('index.html', images=img_fi)
 
 if __name__ == '__main__':
-    app.run(port=3000, debug=True)
+    app.run(port=DevelopmentConfig.PORT, debug=DevelopmentConfig.DEBUG)

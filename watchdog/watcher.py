@@ -78,39 +78,11 @@ class Watcher:
 
         return programs
 
-    def get_poster(self, show_title):
-        """
-        gets the img url for the poster of a show
-
-        args:
-
-        show_title: title of show
-
-        returns:
-
-        dictionary with {show_title: poster_url}
-        """
-
-        #print(self.tracked_shows[show_id]['poster'])
-        for show in self.tracked_shows:
-            if show['title'] == show_title:
-                return {show_title : show['poster']}
-
-    def save_posters(self, urls, title):
+    def save_posters(self, url, ttid):
         """saves posters as images in static/images"""
-        title = self.sanitize_title(title)
-        dest = '{}/{}.jpg'.format(self.static_dir, title)
+        dest = '{}/{}.jpg'.format(self.static_dir, ttid)
+        print('Saving {}'.format(ttid))
         urllib.request.urlretrieve(url, dest)
-
-    def sanitize_title(self, title):
-        """
-        prevents injections and windows errors
-        by removing forbidden characters
-        """
-        forbidden = ('<', '>', ':', '"', '/', '\\', '|', '?', '*')
-        for char in forbidden:
-            title = title.replace(char, '')
-        return title
 
     def get_show_titles(self):
         """
@@ -129,8 +101,8 @@ class Watcher:
 
 if __name__ == '__main__':
     a = Watcher()
-    titles = a.get_show_titles()
-    for t in titles:
-        posters_dict = a.get_poster(t)
-        for title, url in posters_dict.items():
-            a.save_posters(url, title)
+    counter = 0
+    for record in a.tracked_shows:
+        a.save_posters(record['poster'], record['id'])
+        counter += 1
+        print('Saved {} files'.format(counter))
