@@ -34,8 +34,7 @@ def movies():
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
-    show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(
-                                                        request.values['q']))).first_or_404()
+    show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(request.values['q']))).first_or_404()
     if show_object is not None:
         return redirect(url_for('shows',id=show_object.TTid))
     else:
