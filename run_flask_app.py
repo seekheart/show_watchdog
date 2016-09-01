@@ -8,6 +8,7 @@ import os
 import urllib.parse
 from data_model.models import db, imdbInfo
 from setting import DevelopmentConfig
+from fuzzywuzzy import fuzz
 
 app = Flask(__name__)
 app.config.from_object('setting.Config')
@@ -34,17 +35,23 @@ def movies():
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
-    show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(request.values['q']))).first_or_404()
-    if show_object is not None:
-        return redirect(url_for('shows',id=show_object.TTid))
+    #show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(request.values['q']))).first_or_404()
+    fuzzes = list((k, fuzz.partial_ratio(request.values['q'], k)) for k in doggie.get_show_titles())
+    #print(sorted(fuzzes, key=lambda x: x[1], reverse=True)[:3])
+    filter_fuzzes = list(fuzz for fuzz in fuzzes if fuzz[1] >= 60)
+    if filter_fuzzes:
+        return redirect(url_for('shows',id='+'.join(name[0] for name in filter_fuzzes)))
     else:
         abort(404)
 
-@app.route('/shows/<string:id>')
-def shows(id):
-    show_object = imdbInfo.query.filter_by(TTid=id).first()
-    if show_object is not None:
-        return '<img src="../static/images/{}.jpg"></img>'.format(show_object.TTid)
+@app.route('/shows/')
+def shows():
+    shows = request.args.get('id').split('+')
+    show_objects = list(imdbInfo.query.filter_by(Title=k).first().TTid for k in shows)
+    if show_objects:
+        #return '<img src="../static/images/{}.jpg"></img>'.format(show_object.TTid)
+        return render_template('index.html', 
+                images=["../static/images/{}.jpg".format(k) for k in show_objects])
 
 # @app.route('/movies')
 # def home_page():
