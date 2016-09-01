@@ -35,6 +35,8 @@ def movies():
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
+    if request.values['q'] == '':
+        return redirect(url_for('shows', id='+'.join(k for k in doggie.get_show_titles())))
     #show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(request.values['q']))).first_or_404()
     fuzzes = list((k, fuzz.partial_ratio(request.values['q'], k)) for k in doggie.get_show_titles())
     fuzzes = sorted(fuzzes, key=lambda x: x[1], reverse=True)
