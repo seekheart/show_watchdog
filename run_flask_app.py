@@ -35,22 +35,24 @@ def movies():
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
-    if request.values['q'] == '':
+    search_string = request.values['q'].strip()
+    if search_string == '':
         return redirect(url_for('shows', id='+'.join(k for k in doggie.get_show_titles())))
     #show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(request.values['q']))).first_or_404()
-    fuzzes = list((k, fuzz.partial_ratio(request.values['q'], k)) for k in doggie.get_show_titles())
+    fuzzes = ((k, fuzz.partial_ratio(search_string, k)) for k in doggie.get_show_titles())
     fuzzes = sorted(fuzzes, key=lambda x: x[1], reverse=True)
     #print(fuzzes[:3])
-    filter_fuzzes = list(fuzz for fuzz in fuzzes if fuzz[1] >= 60)
-    if filter_fuzzes:
-        return redirect(url_for('shows',id='+'.join(name[0] for name in filter_fuzzes)))
+    filter_fuzzes = (fuzz for fuzz in fuzzes if fuzz[1] >= 60)
+    param_str = '+'.join(name[0] for name in filter_fuzzes)
+    if param_str:
+        return redirect(url_for('shows',id=param_str))
     else:
         abort(404)
 
 @app.route('/shows/')
 def shows():
     shows = request.args.get('id').split('+')
-    show_objects = list(imdbInfo.query.filter_by(Title=k).first().TTid for k in shows)
+    show_objects = (imdbInfo.query.filter_by(Title=k).first().TTid for k in shows)
     #print(show_objects)
     if show_objects:
         #return '<img src="../static/images/{}.jpg"></img>'.format(show_object.TTid)
