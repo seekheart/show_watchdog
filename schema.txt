@@ -6,3 +6,9 @@ imdbInfo
 TTid (pk) VARCHAR(50)
 Title VARCHAR(100)
 PosterURL VARCHAR(200)
+
+episode2show
+Show_ID  VARCHAR(50)
+Show_Title VARCHAR(160)
+EP_ID (pk) VARCHAR(50)
+Episode_Title VARCHAR(200)

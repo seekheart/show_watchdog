@@ -56,7 +56,7 @@ class Watcher:
 
         returns:
 
-        ist of episodes
+        list of episodes
         """
         return self.imdb.get_episodes(show_id)
 
@@ -70,7 +70,8 @@ class Watcher:
 
         returns:
 
-        list of episodes for all shows"""
+        list of episodes for all shows
+        """
 
         programs = {}
         for show in self.tracked_shows:
@@ -102,7 +103,25 @@ class Watcher:
 if __name__ == '__main__':
     a = Watcher()
     counter = 0
-    for record in a.tracked_shows:
-        a.save_posters(record['poster'], record['id'])
-        counter += 1
-        print('Saved {} files'.format(counter))
+    # for record in a.tracked_shows:
+    #     a.save_posters(record['poster'], record['id'])
+    #     counter += 1
+    #     print('Saved {} files'.format(counter))
+
+    all_eps = a.get_all_episodes()
+    header = ['Episode ID', 'Episode Title', 
+                        'Show Title', 'Show ID', '\n']
+    with open('show_eps.tsv', 'w') as outfile:
+        outfile.write('\t'.join(header))
+        for record in a.tracked_shows:
+            eps = all_eps[record['title']]
+            for e in eps:
+                try:
+                    line = [e.imdb_id, e.title, 
+                                record['title'], record['id'], '\n']
+                    line = [str(item) for item in line]
+                    outfile.write('\t'.join(line))
+                except json.decoder.JSONDecodeError as e:
+                    print(e)
+
+
