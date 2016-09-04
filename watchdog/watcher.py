@@ -5,9 +5,11 @@ Mike Tung
 """
 
 from imdbpie import Imdb
+from imdbpie.objects import Episode
 import os
 import urllib.request
 import urllib
+import threading
 
 class Watcher:
     def __init__(self):
@@ -46,19 +48,45 @@ class Watcher:
             if show_title == show['title']:
                 return show['id']
 
-    def get_episodes(self, show_id):
+    def get_episodes(self, show):
         """
         Gets all episodes of a given show
 
         args:
 
-        show_id: tconst id from imdb
+        show: show dictionary (or a dictionary with 'id' and 'title' keys)
 
         returns:
 
         list of episodes
         """
-        return self.imdb.get_episodes(show_id)
+
+        if self.imdb.exclude_episodes:
+            raise ValueError('exclude_episodes is currently set')
+
+        url = self.imdb._build_url('/title/episodes', {'tconst': show['id']})
+        response = self.imdb._get(url)
+
+        if response is None:
+            return None
+
+        seasons = response.get('data').get('seasons')
+        episodes = []
+
+        for season in seasons:
+            season_number = season.get('token')
+            for idx, episode_data in enumerate(season.get('list')):
+                episode_data['series_name'] = show['title']
+                episode_data['episode'] = idx + 1
+                episode_data['season'] = season_number
+                episodes.append(Episode(episode_data))
+
+        return episodes
+
+    def episode_thread_worker(self, shows, programs):
+        for show in shows:
+            data = self.get_episodes(show)
+            programs[show['id']] = data
 
     def get_all_episodes(self):
         """
@@ -72,10 +100,15 @@ class Watcher:
 
         list of episodes for all shows
         """
-
+        threads = []
         programs = {}
         for show in self.tracked_shows:
-            programs[show['title']] = self.get_episodes(show['id'])
+            _thread = threading.Thread(target=self.episode_thread_worker, args=([show], programs))
+            threads.append(_thread)
+            _thread.start()
+
+        for _thread in threads:
+            _thread.join()
 
         return programs
 
@@ -123,5 +156,3 @@ if __name__ == '__main__':
                     outfile.write('\t'.join(line))
                 except json.decoder.JSONDecodeError as e:
                     print(e)
-
-
