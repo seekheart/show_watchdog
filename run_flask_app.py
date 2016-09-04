@@ -12,14 +12,6 @@ from fuzzywuzzy import fuzz
 
 app = Flask(__name__)
 app.config.from_object('setting.Config')
-doggie = watcher.Watcher()
-
-if len(imdbInfo.query.all()) == 0:
-    # populate empty table
-    for i in doggie.tracked_shows:
-        dummy = imdbInfo(i["id"], i["title"], i["poster"])
-        db.session.add(dummy)
-    db.session.commit()
 
 @app.route('/')
 def home():
@@ -37,9 +29,9 @@ def movies():
 def search():
     search_string = request.values['q'].strip()
     if search_string == '':
-        return redirect(url_for('shows', id='+'.join(k for k in doggie.get_show_titles())))
+        return redirect(url_for('shows', id='+'.join(k for k in imdbInfo.Title.distinct())))
     #show_object = imdbInfo.query.filter(imdbInfo.Title.like("%{}%".format(request.values['q']))).first_or_404()
-    fuzzes = ((k, fuzz.partial_ratio(search_string, k)) for k in doggie.get_show_titles())
+    fuzzes = ((k, fuzz.partial_ratio(search_string, k)) for k in imdbInfo.Title.distinct())
     fuzzes = sorted(fuzzes, key=lambda x: x[1], reverse=True)
     #print(fuzzes[:3])
     filter_fuzzes = (fuzz for fuzz in fuzzes if fuzz[1] >= 60)
