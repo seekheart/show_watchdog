@@ -5,7 +5,7 @@ Mike Tung
 """
 
 #imports
-from watcher import Watcher
+from watchdog.watcher import Watcher
 from data_model.models import db
 from data_model.models import imdbInfo
 from data_model.models import Episodes2Show
@@ -23,10 +23,10 @@ def bootstrap_db():
         row = imdbInfo(show['id'], show['title'], show['poster'])
         db.session.add(row)
     db.session.commit()
-    eps = a.get_all_episodes()
+    all_eps = doggie.get_all_episodes()
 
     for record in shows:
-        eps = all_eps[record['title']]
+        eps = all_eps[record['id']]
         for e in eps:
             try:
                 row = Episodes2Show(e.imdb_id, 
@@ -36,4 +36,5 @@ def bootstrap_db():
             except json.decoder.JSONDecodeError as e:
                 print(e)
             db.session.add(row)
-        db.session.commit()
+    db.session.commit()
+    

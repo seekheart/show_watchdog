@@ -32,7 +32,7 @@ class Episodes2Show(db.Model):
     def __init__(self, EP_ID, Episode_TItle, Show_TItle, Show_ID):
         self.EP_ID = EP_ID
         self.Episode_TItle = Episode_TItle
-        self.Show_Title = Show_Title
+        self.Show_TItle = Show_TItle
         self.Show_ID = Show_ID
 
     def __repr__(self):
