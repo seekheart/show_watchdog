@@ -46,7 +46,7 @@ def get_titles_from_watcher():
 
 @timer
 def get_titles_from_db():
-    return db.session.query(imdbInfo.Title.distinct()).all()
+    return [k.Title for k in imdbInfo.query.all()]
 
 a = get_titles_from_db()
 b = get_titles_from_watcher()
