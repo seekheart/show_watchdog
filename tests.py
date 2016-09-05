@@ -45,9 +45,13 @@ def get_titles_from_watcher():
     return doggo.get_show_titles()
 
 @timer
-def get_titles_from_db():
+def get_titles_from_db1():
     return [k.Title for k in imdbInfo.query.all()]
 
-a = get_titles_from_db()
+@timer
+def get_titles_from_db2():
+    return [k[0] for k in db.session.query(imdbInfo.Title).all()]
+
+a = get_titles_from_db1()
 b = get_titles_from_watcher()
-print(a)
+c = get_titles_from_db2()

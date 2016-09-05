@@ -33,8 +33,8 @@ def search():
     search_string = request.values['q'].strip()
     if search_string == '':
         return redirect(url_for('shows',
-            id='+'.join(k.Title for k in imdbInfo.query.all())))
-    fuzzes = ((k.Title, fuzz.partial_ratio(search_string, k.Title)) for k in imdbInfo.query.all())
+            id='+'.join(k[0] for k in db.session.query(imdbInfo.Title).all())))
+    fuzzes = ((k[0], fuzz.partial_ratio(search_string, k[0])) for k in db.session.query(imdbInfo.Title).all())
     fuzzes = sorted(fuzzes, key=lambda x: x[1], reverse=True)
     filter_fuzzes = (fuzz for fuzz in fuzzes if fuzz[1] >= 60)
     param_str = '+'.join(name[0] for name in filter_fuzzes)
