@@ -46,12 +46,16 @@ class Users(db.Model):
     Username = db.Column(db.String(64), primary_key=True)
     Salty_Hash = db.Column(db.String(64))
     Salt = db.Column(db.String(32))
+    Secret = db.Column(db.String(32))
+    Email = db.Column(db.String(64))
     Last_Seen = db.Column(db.Integer)
 
-    def __init__(self, Username, Salty_Hash, Salt, Last_Seen):
+    def __init__(self, Username, Salty_Hash, Salt, Secret, Email, Last_Seen):
         self.Username = Username
         self.Salty_Hash = Salty_Hash
         self.Salt = Salt
+        self.Secret = Secret
+        self.Email = Email
         self.Last_Seen = Last_Seen
 
     def __repr__(self):

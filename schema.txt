@@ -17,4 +17,6 @@ users
 Username (pk) VARCHAR(64)
 Salty_Hash VARCHAR(64)
 Salt VARCHAR(32)
+Secret VARCHAR(32)
+Email VARCHAR(64)
 Last_Seen INT // see you in January 19, 2038

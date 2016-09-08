@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
 #import stuff
-from flask import Flask, render_template, request, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, url_for, abort, make_response
 from flask_wtf import Form
 from watchdog import watcher
 import os
 import urllib.parse
-from data_model.models import db, imdbInfo
+from data_model.models import db, imdbInfo, Users
 from setting import DevelopmentConfig
 from fuzzywuzzy import fuzz
+from authentication import custom_auth
+import time
 
 app = Flask(__name__)
 app.config.from_object('setting.Config')
@@ -57,6 +59,29 @@ def shows():
     if show_objects:
         return render_template('index.html', 
                 images=["../static/images/{}.jpg".format(k) for k in show_objects])
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html")
+    else:
+        return str(request.values)
+
+@app.route('/register', methods=["POST"])
+def register():
+    values = request.values
+    new_salt = custom_auth.random_fixed_string()
+    new_password_hash = custom_auth.sha256_hash(new_salt + values["password"])
+    new_secret = custom_auth.random_fixed_string()
+    new_email = values["email"]
+    new_user = Users(values["username"], new_password_hash, new_salt, new_secret, new_email, int(time.time()))
+    db.session.add(new_user)
+    db.session.commit()
+
+    test_response = make_response(redirect('/'))
+    test_response.set_cookie('username', values['username'])
+    test_response.set_cookie('secret', new_secret)
+    return test_response
 
 if __name__ == '__main__':
     app.run(port=DevelopmentConfig.PORT, debug=DevelopmentConfig.DEBUG)
