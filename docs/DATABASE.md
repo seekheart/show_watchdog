@@ -49,7 +49,7 @@ IGNORE 1 LINES;
 episode2show
 ---
 ```sql
-LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 5.7/Uploads/show_eps.csv"
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 5.7/Uploads/show_eps.tsv"
 INTO TABLE episode2show
 COLUMNS TERMINATED BY ','
 LINES TERMINATED BY '\n'
