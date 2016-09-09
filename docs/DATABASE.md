@@ -51,7 +51,7 @@ episode2show
 ```sql
 LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 5.7/Uploads/show_eps.tsv"
 INTO TABLE episode2show
-COLUMNS TERMINATED BY ','
+COLUMNS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
 ```
