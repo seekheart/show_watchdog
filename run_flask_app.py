@@ -25,7 +25,13 @@ if len(imdbInfo.query.all()) == 0:
 
 @app.route('/')
 def home():
-    return render_template('homepage.html')
+    if 'username' in request.cookies and 'secret' in request.cookies:
+        my_query = Users.query.filter_by(Username=request.cookies['username']).first()
+        if my_query is not None and my_query.Username == request.cookies['username'] and my_query.Secret == request.cookies['secret']:
+            return render_template('homepage.html', username=my_query.Username)
+    else:
+        # TODO: handle false logins
+        return render_template('homepage.html', username=None)
 
 @app.route('/movies', methods=['GET','POST'])
 def movies():
@@ -65,23 +71,42 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
     else:
-        return str(request.values)
+        values = request.values
+        my_query = Users.query.filter_by(Username=values["username"]).first()
+        if my_query is not None:
+            new_password_hash = custom_auth.sha256_hash(my_query.Salt+values["password"])
+            if my_query.Salty_Hash == new_password_hash:
+                response = make_response(redirect('/'))
+                response.set_cookie('username', my_query.Username)
+                response.set_cookie('secret', my_query.Secret)
+
+                return response
+            else:
+                abort(404)
+        # TODO (sam): properly handle wrong logins 
+        else:
+            abort(404)
 
 @app.route('/register', methods=["POST"])
 def register():
     values = request.values
-    new_salt = custom_auth.random_fixed_string()
-    new_password_hash = custom_auth.sha256_hash(new_salt + values["password"])
-    new_secret = custom_auth.random_fixed_string()
-    new_email = values["email"]
-    new_user = Users(values["username"], new_password_hash, new_salt, new_secret, new_email, int(time.time()))
-    db.session.add(new_user)
-    db.session.commit()
+    
+    if Users.query.filter_by(Username=values["username"]).first() is None:
+        new_salt = custom_auth.random_fixed_string()
+        new_password_hash = custom_auth.sha256_hash(new_salt + values["password"])
+        new_secret = custom_auth.random_fixed_string()
+        new_email = values["email"]
+        new_user = Users(values["username"], new_password_hash, new_salt, new_secret, new_email, int(time.time()))
+        db.session.add(new_user)
+        db.session.commit()
 
-    test_response = make_response(redirect('/'))
-    test_response.set_cookie('username', values['username'])
-    test_response.set_cookie('secret', new_secret)
-    return test_response
+        response = make_response(redirect('/'))
+        response.set_cookie('username', values['username'])
+        response.set_cookie('secret', new_secret)
+        return response
+    else:
+        # TODO (sam): properly handle if user already exists
+        abort(404)
 
 if __name__ == '__main__':
     app.run(port=DevelopmentConfig.PORT, debug=DevelopmentConfig.DEBUG)
