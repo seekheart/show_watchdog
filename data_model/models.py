@@ -39,3 +39,27 @@ class Episodes2Show(db.Model):
         return "<ID {}>".format(self.EP_ID)
     def __str__(self):
         return "{}, {}".format(self.EP_ID, self.Episode_Title)
+
+class Users(db.Model):
+    __tablename__ = 'users'
+
+    Username = db.Column(db.String(64), primary_key=True)
+    Salty_Hash = db.Column(db.String(64))
+    Salt = db.Column(db.String(32))
+    Secret = db.Column(db.String(32))
+    Email = db.Column(db.String(64))
+    Last_Seen = db.Column(db.Integer)
+
+    def __init__(self, Username, Salty_Hash, Salt, Secret, Email, Last_Seen):
+        self.Username = Username
+        self.Salty_Hash = Salty_Hash
+        self.Salt = Salt
+        self.Secret = Secret
+        self.Email = Email
+        self.Last_Seen = Last_Seen
+
+    def __repr__(self):
+        return "<User {}>".format(self.Username)
+    def __str__(self):
+        return "{}, {}".format(self.Username, self.Last_Seen)
+>>>>>>> user_support

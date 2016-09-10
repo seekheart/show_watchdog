@@ -13,7 +13,7 @@ import threading
 
 class Watcher:
     def __init__(self):
-        self.imdb = Imdb(anonymize=True)
+        self.imdb = Imdb(anonymize=False)
         self.tracked_shows = self.get_shows()
         self.static_dir = os.path.join(os.path.dirname(__file__), '../static/images')
 

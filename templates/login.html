@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <title>Watchdog - Login</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <body style="background-color:#333">
+            <div style="margin-top:50px;margin-left:100px;margin-right:100px;">
+                <div class="container" id="box">
+                    <div class="row jumbotron">
+                        <div class="col-md-6">
+                            <h2 class="text text-center">Login</h1>
+                            {% if login_error == False %}
+                            <form action="/login" method="POST" onsubmit="return login_validate()">
+                                <div class="form-group">
+                                    <label for="login-username">Username</label>
+                                    <input type="text" placeholder="Username" name="username" id="login-username" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="login-password">Password</label>
+                                    <input type="password" placeholder="Password" name="password" id="login-password" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Login</button>
+                                </div>
+                            </form>
+                            {% elif login_error == True %}
+                            <form action="/login" method="POST" onsubmit="return login_validate()">
+                                <div class="form-group has-error has-feedback">
+                                    <label for="login-username">Username</label>
+                                    <input type="text" class="form-control" id="login-username" placeholder="Username">
+                                    <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                                    <span id="login-usernameStatus" class="sr-only">(error)</span>
+                                </div>
+                                <div class="form-group has-error has-feedback">
+                                    <label for="login-password">Password</label>
+                                    <input type="text" class="form-control" id="login-password" placeholder="Password">
+                                    <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                                    <span id="login-passwordStatus" class="sr-only">(error)</span>
+                                </div>
+                                <div class="form-group">
+                                    <span class="help-block" style="color:#a94442;">Please check your username and password again.</span>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Login</button>
+                                </div>
+                            </form>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h2 class="text text-center">Register</h1>
+                                {% if register_error == False %}
+                                <form action="/register" method="POST" onsubmit="return register_validate()">
+                                    <div class="form-group">
+                                        <label for="register-email">E-mail</label>
+                                        <input type="text" placeholder="E-mail" name="email" id="register-email" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="register-username">Username</label>
+                                        <input type="text" placeholder="Username" name="username" id="register-username" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="register-password">Password</label>
+                                        <input type="password" placeholder="Password" name="password" id="register-password" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="register-password-again">Password Again</label>
+                                        <input type="password" placeholder="Password" id="register-password-again" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> Register</button>
+                                    </div>
+                                </form>
+                                {% elif register_error == True %}
+                                <form action="/register" method="POST" onsubmit="return register_validate()">
+                                    <div class="form-group">
+                                        <label for="register-email">E-mail</label>
+                                        <input type="text" placeholder="E-mail" name="email" id="register-email" class="form-control">
+                                    </div>
+                                    <div class="form-group has-error has-feedback">
+                                        <label for="register-username">Username</label>
+                                        <input type="text" class="form-control" id="register-username" placeholder="Username">
+                                        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                                        <span id="register-usernameStatus" class="sr-only">(error)</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="register-password">Password</label>
+                                        <input type="password" placeholder="Password" name="password" id="register-password" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="register-password-again">Password Again</label>
+                                        <input type="password" placeholder="Password" id="register-password-again" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <span class="help-block" style="color:#a94442;">This username is already in use.</span>
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> Register</button>
+                                    </div>
+                                </form>
+                                {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                function register_validate(){
+                    if(document.getElementById("register-password").value === document.getElementById("register-password-again").value && !(document.getElementById("register-username") === "") && !(document.getElementById("register-password").value === "") && !(document.getElementById("register-email").value === "")){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+
+                function login_validate(){
+                    if(!(document.getElementById("login-username") === "") && !(document.getElementById("login-password").value === "")){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            </script>
+    </body>
+</html>
