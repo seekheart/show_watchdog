@@ -25,15 +25,24 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update --fix-missing && apt-get insta
 COPY ./requirements.txt /Watchdog/requirements.txt
 RUN pip3 install -r /Watchdog/requirements.txt
 
-#set WD
-WORKDIR /Watchdog
-
 #install mysql-connector for python
-COPY ./setupMySQLConnector.bash ./connector.bash
-RUN bash connector.bash
+COPY ./setupMySQLConnector.bash /Watchdog/connector.bash
+RUN bash /Watchdog/connector.bash
+
+#move project over
+COPY ./authentication /Watchdog/authentication
+COPY ./data /Watchdog/data
+COPY ./data_model /Watchdog/data_model
+COPY ./docs /Watchdog/docs
+COPY ./static /Watchdog/static
+COPY ./templates /Watchdog/templates
+COPY ./watchdog /Watchdog/watchdog
+COPY ./run_flask_app.py /Watchdog/run_flask_app.py
+COPY ./setting.py /Watchdog/setting.py
 
 #set timezone
 RUN echo "America/New_York">/etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
 
-## TODO make entry.sh
+#set WD
+WORKDIR /Watchdog

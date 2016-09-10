@@ -132,6 +132,3 @@ class Watcher:
         """
 
         return [show['title'] for show in self.tracked_shows]
-
-if __name__ == '__main__':
-    pass
