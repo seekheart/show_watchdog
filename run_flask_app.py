@@ -30,7 +30,6 @@ def home():
         if my_query is not None and my_query.Username == request.cookies['username'] and my_query.Secret == request.cookies['secret']:
             return render_template('homepage.html', username=my_query.Username)
     else:
-        # TODO: handle false logins
         return render_template('homepage.html', username=None)
 
 @app.route('/movies', methods=['GET','POST'])
@@ -69,7 +68,7 @@ def shows():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", login_error=False, register_error=False)
     else:
         values = request.values
         my_query = Users.query.filter_by(Username=values["username"]).first()
@@ -82,15 +81,14 @@ def login():
 
                 return response
             else:
-                abort(404)
-        # TODO (sam): properly handle wrong logins 
+                return render_template('login.html', login_error=True, register_error=False)
         else:
-            abort(404)
+            return render_template('login.html', login_error=True, register_error=False)
+
 
 @app.route('/register', methods=["POST"])
 def register():
     values = request.values
-    
     if Users.query.filter_by(Username=values["username"]).first() is None:
         new_salt = custom_auth.random_fixed_string()
         new_password_hash = custom_auth.sha256_hash(new_salt + values["password"])
@@ -105,8 +103,7 @@ def register():
         response.set_cookie('secret', new_secret)
         return response
     else:
-        # TODO (sam): properly handle if user already exists
-        abort(404)
+        return render_template('login.html', login_error=False, register_error=True)
 
 if __name__ == '__main__':
     app.run(port=DevelopmentConfig.PORT, debug=DevelopmentConfig.DEBUG)
