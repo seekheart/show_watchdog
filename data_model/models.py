@@ -31,8 +31,6 @@ class Episodes2Show(db.Model):
 
     def __init__(self, EP_ID, Episode_Title, Show_Title, Show_ID):
         self.EP_ID = EP_ID
-        self.Episode_Title = Episode_Title
-        self.Show_Title = Show_Title
         self.Show_ID = Show_ID
 
     def __repr__(self):
@@ -62,4 +60,3 @@ class Users(db.Model):
         return "<User {}>".format(self.Username)
     def __str__(self):
         return "{}, {}".format(self.Username, self.Last_Seen)
->>>>>>> user_support
